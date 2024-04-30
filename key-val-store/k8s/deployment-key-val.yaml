@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: key-val-store
+  labels:
+    app: key-val-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: key-val-store
+  template:
+    metadata:
+      name: key-val-store
+      labels:
+        app: key-val-store
+    spec:
+      containers:
+        - name: key-val-store
+          image: nginx # TODO: replace it
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      restartPolicy: Always
+      

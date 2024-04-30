@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  labels:
+    app: mongo-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      # this selector is used to match the pods with the deployment
+      app: mongo-db
+  # template is the blueprint for the pods(configuration of pod). Has own metadata and spec section
+  template:
+    metadata:
+      labels:
+        app: mongo-db
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:6
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: mongo-secret
+                    key: mongo-pass
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # this is endpoint for the service that will be used to access the pods
+  name: mongodb-service
+spec:
+  selector:
+    # select pods to forward traffic to
+    app: mongo-db
+  ports:
+    - protocol: TCP
+      # port on the service
+      port: 27017
+      # port on the pod
+      targetPort: 27017
+  type: ClusterIP

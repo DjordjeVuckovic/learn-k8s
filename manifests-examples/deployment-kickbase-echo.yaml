@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kickbase-echo-deployment
+  labels:
+    app: kickbase-echo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kickbase-echo
+  template:
+    metadata:
+      name: kickbase-echo-deployment
+      labels:
+        app: kickbase-echo
+    spec:
+      containers:
+        - name: kicbase-echo
+          image: kicbase/echo-server
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kickbase-echo-service
+  labels:
+    app: kickbase-echo
