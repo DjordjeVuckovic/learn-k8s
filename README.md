@@ -4,6 +4,9 @@
 - [Learn k8s](docs/learn-k8s.md)
 - [K8s local deployment](docs/k8s-local-deployment.md)
 
+# Autoscaling folder contains documentation for k8s
+- [Autoscaling in k8s](autoscaling/README.md)
+
 ## Examples folder contains manifest examples for k8s
 - [Manifests KickBase](manifests-examples/deployment-kickbase-echo.yaml)
 
