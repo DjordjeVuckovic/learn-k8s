@@ -1,0 +1,34 @@
+# azure service bus trigger
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: queue-based-scaler
+spec:
+  scaleTargetRef:
+    name: app-to-scale-deployment
+  minReplicaCount: 1 # can be 0
+  maxReplicaCount: 10
+  triggers:
+    - type: azure-servicebus
+      metadata:
+        queueName: msg-queue
+        queueLength: '500' # for every N messages in the queue, scale up.
+        connectionFromEnv: ${ServiceBusConnectionString}
+---
+# prometheus based autoscaler(combine multiple queues)
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: queue-based-service-scaler
+spec:
+  scaleTargetRef:
+    name: queue-based-service
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: https://prometheus-server
+        metricName: combined_queue_length
+        threshold: '500' # for every N messages in the both queue, scale up
+        query: 'sum(servicebus_queue_messages{queue_name=~"msg-queue-1|msg-queue-2"})'

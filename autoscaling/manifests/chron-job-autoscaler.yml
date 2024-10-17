@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-up-chron-job
+spec:
+  schedule: "30 7 * * *"  # Every day at 7:30 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: scale-up
+              image: bitnami/kubectl:latest  # You can use kubectl inside a container
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  kubectl scale deployment app-to-scale-deployment --replicas=10
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-up-job
+spec:
+  schedule: "30 15 * * *"  # Every day at 15:30 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: scale-up
+              image: bitnami/kubectl:latest  # You can use kubectl inside a container
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  kubectl scale deployment app-to-scale-deployment --replicas=5
+          restartPolicy: OnFailure

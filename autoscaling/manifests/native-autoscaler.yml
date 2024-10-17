@@ -1,0 +1,31 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: group-api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app-to-scale-deployment
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80 # 80%-90% or higher CPU utilization are indication that .NET app is under heavy load
+    - type: Resource
+      resource:
+          name: memory
+          target:
+            type: Utilization
+            averageUtilization: 85 # 75%-85% memory utilization over long period of time is indication that .NET app is under heavy load
+#    - type: Pods
+#      pods:
+#        metric:
+#          name: http_requests_per_second
+#        target:
+#          type: AverageValue
+#          averageValue: "100"
