@@ -123,6 +123,8 @@ scale.replicas
 status.replicas
 status.labelSelector
 ```
+- The image below shows how Keda can be used to scale pods based on the number of messages in a queue.
+![keda-queue-based-autoscaling](./images/keda_que_based_autoscaling.png)
 ### Custom dedicated autoscaler application:
 - Kubernetes provides a framework for building custom autoscalers that can be used to scale your pods based on custom
   metrics or requirements.
