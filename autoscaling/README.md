@@ -5,7 +5,7 @@
 of pods in replicas property utilizing token replacement strategy.
 - Also, you can manually scale the number of pods in a deployment or replica set using the `kubectl scale` command.
 
-## Introduction
+## Autoscaling Introduction
 
 Autoscaling is a feature in Kubernetes that allows you to automatically adjust the number of pods in a deployment or
 replica set based on the resource usage of the pods. This helps to ensure that your application can handle varying
@@ -44,6 +44,8 @@ based on the observed usage.
    hours. The metrics highly depend on the application type and its requirements, because one app is fine running on 90%
    CPU but other will throttle requests.
 
+[Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+![HPA](./images/hpa-img.png)
 
 ### Combining VPA and HPA
 
@@ -52,9 +54,6 @@ based on the observed usage.
   cause unexpected behavior. If you absolutely need to use both, make sure to carefully configure them to avoid
   conflicts.
 
-[Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
-![HPA](./images/hpa-img.png)
-
 ### Native HPA:
 - Native HPA supports CPU,memory metrics, and more(http_requests_per_second).
 - The common use for HorizontalPodAutoscaler is to configure it to fetch metrics from aggregated APIs (metrics.k8s.io, custom.metrics.k8s.io, or external.metrics.k8s.io).
@@ -62,7 +61,7 @@ based on the observed usage.
 - Different applications have different requirements, one app is fine running on 90% CPU but other app will throttle
   requests on 40% CPU usage.
 - Some applications may have specific requirements that cannot be met by the native HPA, so you need custom strategy based on app requirements.
-- Good approach is to use custom client metrics.
+- Good approach can be to use custom client metrics.
 - There is 4 golden signals that you can use to scale your pods:
 ```text
 Latency
@@ -96,6 +95,7 @@ Saturation
 - For example, have a pool of spot instances during off-peak hours to save costs while relying
   on on-demand instances during peak hours for reliability.
 - If you need large amount of pods, you can use spot instances for cost savings.
+- Also, if there is need for constantly a lot of job/messages to process this is perfect use case for that.
 
 ## Cluster Autoscaler:
 

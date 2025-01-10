@@ -15,7 +15,7 @@ spec:
                 - /bin/sh
                 - -c
                 - |
-                  kubectl scale deployment app-to-scale-deployment --replicas=10
+                  kubectl scale deployment autoscaling-app-deployment --replicas=10
           restartPolicy: OnFailure
 ---
 apiVersion: batch/v1
@@ -35,5 +35,5 @@ spec:
                 - /bin/sh
                 - -c
                 - |
-                  kubectl scale deployment app-to-scale-deployment --replicas=5
+                  kubectl scale deployment autoscaling-app-deployment --replicas=5
           restartPolicy: OnFailure

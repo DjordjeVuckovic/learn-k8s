@@ -6,7 +6,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: app-to-scale-deployment
+    name: autoscaling-app-deployment
   minReplicaCount: 1 # should match with the number of replicas in the deployment
   maxReplicaCount: 15
   pollingInterval: 120               # Poll every 120 seconds
@@ -29,4 +29,10 @@ spec:
       metadata:
         name: cpu
         targetType: Utilization
-        targetValue: "95"           # If resource exceeds  90% CPU utilization scale up
+        targetValue: "95"           # If resource exceeds  95% CPU utilization scale up
+    
+    - type: resource
+      metadata:
+          name: memory
+          targetType: Utilization
+          targetValue: "90"           # If resource exceeds  90% memory utilization scale up

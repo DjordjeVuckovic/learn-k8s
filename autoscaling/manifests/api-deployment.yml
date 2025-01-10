@@ -1,22 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-to-scale-deployment
+  name: autoscaling-app-deployment
 spec:
   selector:
     matchLabels:
-      app: app-to-scale
+      app: autoscaling-app
   replicas: 1
   template:
     metadata:
       labels:
-        app: app-to-scale
+        app: autoscaling-app
     spec:
       containers:
-        - name: app-to-scale
+        - name: autoscaling-app
           image: nginx:latest
           ports:
             - containerPort: 80
+          env:
+            - name: SB_CONNECTION_STRING
+              value: ${SB_CONNECTION_STRING_VALUE}
+          
           resources:
             requests:
               memory: "64Mi"
@@ -28,3 +32,4 @@ spec:
             httpGet:
               path: /health
               port: 80
+          

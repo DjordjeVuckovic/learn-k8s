@@ -12,17 +12,17 @@ spec:
     - type: azure-servicebus
       metadata:
         queueName: msg-queue
-        queueLength: '500' # for every N messages in the queue, scale up.
-        connectionFromEnv: ${ServiceBusConnectionString}
+        queueLength: '200' # for every N messages in the queue, scale up.
+        connectionFromEnv: SB_CONNECTION_STRING
 ---
 # prometheus based autoscaler(combine multiple queues)
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: queue-based-service-scaler
+  name: queue-based-scaler-prometheus
 spec:
   scaleTargetRef:
-    name: queue-based-service
+    name: app-to-scale-deployment
   minReplicaCount: 1
   maxReplicaCount: 10
   triggers:
@@ -30,5 +30,36 @@ spec:
       metadata:
         serverAddress: https://prometheus-server
         metricName: combined_queue_length
-        threshold: '500' # for every N messages in the both queue, scale up
+        threshold: '200' # for every N messages in the both queue, scale up
         query: 'sum(servicebus_queue_messages{queue_name=~"msg-queue-1|msg-queue-2"})'
+---
+# scaling modifiers -> Enables us to combine multiple triggers and scale based on our formula
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: queue-based-scaler-modifier
+spec:
+  scaleTargetRef:
+    name: app-to-scale-deployment
+  minReplicaCount: 1 # can be 0
+  maxReplicaCount: 10
+  advanced:
+    scalingModifiers:
+      formula: "(msg-queue-1 + msg-queue-2)/2"
+      target: "5"
+      activationTarget: "2"
+      metricType: "AverageValue"
+  triggers:
+    - type: azure-servicebus
+      name: msg-queue-1
+      metadata:
+        queueName: msg-queue-1
+        queueLength: '200' # for every N messages in the queue, scale up.
+        connectionFromEnv: SB_CONNECTION_STRING
+    - type: azure-servicebus
+      name: msg-queue-1
+      metadata:
+        queueName: msg-queue-1
+        queueLength: '100' # for every N messages in the queue, scale up.
+        connectionFromEnv: SB_CONNECTION_STRING  
+---
